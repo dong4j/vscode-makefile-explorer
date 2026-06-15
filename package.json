@@ -1,0 +1,92 @@
+{
+  "name": "makefile-explorer",
+  "displayName": "Makefile Explorer",
+  "description": "Browse and run Makefile targets in a tree view — click to run, right-click to jump to definition",
+  "version": "0.1.0",
+  "publisher": "dong4j",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dong4j/makefile-explorer"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "icon": "icon.png",
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "makefile",
+    "make",
+    "build",
+    "task runner",
+    "targets"
+  ],
+  "activationEvents": [
+    "onView:makefileExplorer"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "makefileExplorer",
+          "name": "Make Targets",
+          "contextualTitle": "Makefile Targets"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "makefile-explorer.runTarget",
+        "title": "Run Target",
+        "icon": "$(play)"
+      },
+      {
+        "command": "makefile-explorer.goToDefinition",
+        "title": "Go to Target Definition",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "makefile-explorer.refresh",
+        "title": "Refresh Makefile Targets",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "makefile-explorer.refresh",
+          "when": "view == makefileExplorer",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "makefile-explorer.goToDefinition",
+          "when": "viewItem == makefileTarget",
+          "group": "inline"
+        },
+        {
+          "command": "makefile-explorer.goToDefinition",
+          "when": "viewItem == makefileTarget",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.x",
+    "typescript": "^5.4.0"
+  }
+}
