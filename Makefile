@@ -1,7 +1,7 @@
 ## Makefile Explorer — 项目自身的 Makefile
 ##
 ## ⚠️ 发布前：手动修改下方的 VERSION，然后执行 `make release`
-VERSION := 0.2.0
+VERSION := 0.3.0
 
 .PHONY: all install-deps compile watch package install clean release
 
@@ -42,12 +42,10 @@ clean: ## 清理编译产物和 .vsix
 release: compile ## 发布新版本（自动更新 package.json + 提交 + 打 tag + 推送）
 	@echo "==> 📋 发布版本: v$(VERSION)"
 	@echo ""
-	@echo "==> 检查未提交变更..."
-	@test -z "$$(git status --porcelain)" || (echo "❌ 有未提交的变更，请先提交或 stash"; exit 1)
 	@echo "==> 更新 package.json 版本号为 $(VERSION)..."
 	@node -e "var p=require('./package.json');p.version='$(VERSION)';require('fs').writeFileSync('./package.json',JSON.stringify(p,null,2)+'\n')"
 	@echo "==> 提交版本更新..."
-	git add package.json
+	git add Makefile package.json
 	git commit -m "chore: bump to v$(VERSION)"
 	@echo "==> 推送 main 分支..."
 	git push origin main
