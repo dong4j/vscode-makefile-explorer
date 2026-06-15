@@ -1,12 +1,7 @@
 ## Makefile Explorer — 项目自身的 Makefile
 ##
-## 用法：
-##   make          # 安装依赖 + 编译
-##   make watch    # 监听模式开发
-##   make package  # 打包 .vsix
-##   make install  # 安装到本地 VSCode
-##   make clean    # 清理编译产物
-##   make release  # 发布流程引导
+## ⚠️ 发布前：手动修改下方的 VERSION，然后执行 `make release`
+VERSION := 0.1.0
 
 .PHONY: all install-deps compile watch package install clean release
 
@@ -26,8 +21,7 @@ watch: ## 监听模式（文件变化自动编译）
 # ---- 打包安装 ----
 
 package: compile ## 打包 .vsix
-	@echo "==> 打包 .vsix..."
-	npm run package
+	@npm run package
 	@echo ""
 	@echo "✅ 打包完成: $$(ls -t *.vsix | head -1)"
 
@@ -45,17 +39,25 @@ clean: ## 清理编译产物和 .vsix
 
 # ---- 发布 ----
 
-release: ## 发布流程引导（人工确认后推送 tag）
-	@echo "==> 📋 发布前检查清单"
-	@echo "  [ ] CHANGELOG.md 已更新版本号"
-	@echo "  [ ] package.json version 已更新"
-	@echo "  [ ] npm run compile 通过"
-	@echo "  [ ] 本地测试无问题"
+release: compile ## 发布新版本（自动更新 package.json + 提交 + 打 tag + 推送）
+	@echo "==> 📋 发布版本: v$(VERSION)"
 	@echo ""
-	@echo "==> 🚀 确认无误后执行:"
-	@echo "  git add . && git commit -m 'chore: bump to v\033[1;33m<version>\033[0m'"
-	@echo "  git push origin main"
-	@echo "  git tag v\033[1;33m<version>\033[0m"
-	@echo "  git push origin v\033[1;33m<version>\033[0m"
+	@echo "==> 检查未提交变更..."
+	@test -z "$$(git status --porcelain)" || (echo "❌ 有未提交的变更，请先提交或 stash"; exit 1)
+	@echo "==> 更新 package.json 版本号为 $(VERSION)..."
+	@node -e "var p=require('./package.json');p.version='$(VERSION)';require('fs').writeFileSync('./package.json',JSON.stringify(p,null,2)+'\n')"
+	@echo "==> 提交版本更新..."
+	git add package.json
+	git commit -m "chore: bump to v$(VERSION)"
+	@echo "==> 推送 main 分支..."
+	git push origin main
+	@echo "==> 创建 tag v$(VERSION) 并推送..."
+	git tag v$(VERSION)
+	git push origin v$(VERSION)
 	@echo ""
-	@echo "  GitHub Actions 自动构建 .vsix 并写入 Release 页面"
+	@echo "✅ 发布完成！GitHub Actions 正在自动："
+	@echo "   1. 发布到 VSCode Marketplace"
+	@echo "   2. 构建 .vsix"
+	@echo "   3. 上传到 GitHub Release"
+	@echo ""
+	@echo "🔗 https://github.com/dong4j/makefile-explorer/releases"
