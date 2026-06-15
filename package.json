@@ -40,6 +40,11 @@
     },
     "commands": [
       {
+        "command": "makefile-explorer.handleTargetClick",
+        "title": "Handle Target Click",
+        "icon": "$(debug-start)"
+      },
+      {
         "command": "makefile-explorer.runTarget",
         "title": "Run Target",
         "icon": "$(play)"

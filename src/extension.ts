@@ -3,13 +3,15 @@
  *
  * 激活时：
  * 1. 创建 MakefileTreeProvider 并注册到 Explorer 侧边栏
- * 2. 注册 runTarget（执行）、goToDefinition（跳转定义）、refresh（刷新）命令
+ * 2. 注册 handleTargetClick（双击检测）、runTarget（直接执行）、
+ *    goToDefinition（跳转定义）、refresh（刷新）命令
  * 3. 启动文件监听，Makefile 变化时自动刷新树
  *
  * 交互设计：
- * - 点击 target 节点 → 在终端执行 make <target>
- * - 右键 target → "Go to Definition" → 跳转到 Makefile 中的定义行
- * - 点击 Makefile 文件节点 → 在编辑器中打开 Makefile
+ * - 双击 target 节点 → 在终端执行 make <target>（防误触）
+ * - 单击 target 右侧图标 → 跳转到 Makefile 定义行
+ * - 右键 → "Go to Definition" → 同上
+ * - 单击 Makefile 文件节点 → 在编辑器中打开 Makefile
  * - 标题栏刷新按钮 → 重新扫描工作区
  *
  * 参数兼容说明：
@@ -24,6 +26,9 @@ import { MakefileTreeProvider } from './MakefileTreeProvider';
 
 /** 用于查找或创建 Make 专用终端 */
 const MAKE_TERMINAL_NAME = 'Make';
+
+/** 双击判定窗口（毫秒） */
+const DOUBLE_CLICK_WINDOW_MS = 500;
 
 /**
  * 从不同来源的参数中提取统一字段
@@ -61,16 +66,64 @@ export function activate(context: vscode.ExtensionContext): void {
     showCollapseAll: true
   });
 
+  // ---- 双击检测状态 ----
+  // 记录上一次点击的 target 和时间，用于判定双击
+  let lastClick: { name: string; filePath: string; time: number } | null = null;
+
+  // ---- 共享执行逻辑 ----
+
+  /**
+   * 在终端中执行 make target（不经过双击检测）
+   */
+  function executeTarget(targetName: string, filePath: string): void {
+    const makefileDir = path.dirname(filePath);
+    const fileName = path.basename(filePath);
+    const command = `cd "${makefileDir}" && make -f ${fileName} ${targetName}`;
+
+    let terminal = vscode.window.terminals.find(t => t.name === MAKE_TERMINAL_NAME);
+    if (!terminal) {
+      terminal = vscode.window.createTerminal(MAKE_TERMINAL_NAME);
+    }
+
+    terminal.show();
+    terminal.sendText(command);
+
+    console.log(`[Makefile Explorer] 执行: ${command}`);
+  }
+
   // ---- 注册命令 ----
 
   /**
-   * 执行 target：在终端中运行 `make <target>`
+   * 处理 target 点击（双击检测入口）
    *
-   * 执行逻辑（与 vscode-makefile-term 一致）：
-   * cd 到 Makefile 所在目录 → make -f <文件名> <target>
-   *
-   * 参数来源：
-   * - 点击 TreeItem：TreeItem.command.arguments → { name, filePath, line }
+   * 同一 target 在 500ms 内连续点击两次 → 执行 make
+   * 单次点击 → 不执行（防误触）
+   */
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'makefile-explorer.handleTargetClick',
+      (args: Record<string, unknown> | undefined) => {
+        const info = normalizeArgs(args);
+        if (!info) return;
+
+        const now = Date.now();
+        const isDoubleClick =
+          lastClick !== null &&
+          lastClick.name === info.name &&
+          lastClick.filePath === info.filePath &&
+          (now - lastClick.time) < DOUBLE_CLICK_WINDOW_MS;
+
+        lastClick = { name: info.name, filePath: info.filePath, time: now };
+
+        if (isDoubleClick) {
+          executeTarget(info.name, info.filePath);
+        }
+      }
+    )
+  );
+
+  /**
+   * 直接执行 target（不走双击检测，供命令面板或快捷键使用）
    */
   context.subscriptions.push(
     vscode.commands.registerCommand(
@@ -81,23 +134,7 @@ export function activate(context: vscode.ExtensionContext): void {
           vscode.window.showWarningMessage('无法获取 target 信息，请刷新后重试');
           return;
         }
-
-        const makefileDir = path.dirname(info.filePath);
-        const fileName = path.basename(info.filePath);
-
-        // 构建 shell 命令：cd 到目录后执行 make
-        const command = `cd "${makefileDir}" && make -f ${fileName} ${info.name}`;
-
-        // 查找或创建 Make 专用终端（复用避免产生大量终端标签）
-        let terminal = vscode.window.terminals.find(t => t.name === MAKE_TERMINAL_NAME);
-        if (!terminal) {
-          terminal = vscode.window.createTerminal(MAKE_TERMINAL_NAME);
-        }
-
-        terminal.show();
-        terminal.sendText(command);
-
-        console.log(`[Makefile Explorer] 执行: ${command}`);
+        executeTarget(info.name, info.filePath);
       }
     )
   );

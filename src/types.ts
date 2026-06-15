@@ -63,13 +63,13 @@ export class MakefileNode extends vscode.TreeItem {
         arguments: [vscode.Uri.file(filePath)]
       };
     } else {
-      // target 节点：点击 → 在终端执行
+      // target 节点：双击 → 终端执行（防误触）
       this.iconPath = new vscode.ThemeIcon('symbol-method');
       this.contextValue = 'makefileTarget';
-      this.tooltip = `${filePath}:${targetLine + 1} — 点击执行，右键跳转到定义`;
+      this.tooltip = `${filePath}:${targetLine + 1} — 双击执行，右侧图标跳转到定义`;
       this.command = {
-        command: 'makefile-explorer.runTarget',
-        title: 'Run Make Target',
+        command: 'makefile-explorer.handleTargetClick',
+        title: 'Handle Target Click',
         arguments: [{ name: label, filePath, line: targetLine }]
       };
     }
