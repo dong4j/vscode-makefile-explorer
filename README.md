@@ -1,6 +1,6 @@
 # Makefile Explorer
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/dong4j/makefile-explorer)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/dong4j/makefile-explorer)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![VSCode](https://img.shields.io/badge/vscode-%5E1.85.0-007ACC)](https://code.visualstudio.com/)
 [![中文文档](https://img.shields.io/badge/文档-中文-red)](README-ZH.md)
@@ -14,16 +14,16 @@
 When your Makefile grows to 50+ targets, finding the right one in a flat text file is painful. Makefile Explorer treats every Makefile like a folder of executable commands:
 
 - **Expand** a Makefile node → see all targets at a glance
-- **Click** a target → runs `make <target>` in the terminal
-- **Right-click** → jumps straight to the definition line
+- **Double-click** a target → runs `make <target>` in the terminal
+- **Click the 📎 icon** or **right-click** → jumps straight to the definition line
 
 Built for the monorepo reality: multiple Makefiles, nested directories, dozens of targets — all organized in one tree.
 
 ## Features
 
 - **🌲 Tree View** — Targets grouped by Makefile in the Explorer sidebar
-- **▶ One-Click Execute** — Click any target to run it in a terminal
-- **🔍 Jump to Definition** — Right-click → "Go to Target Definition" jumps to the exact line
+- **▶ Double-Click Execute** — Double-click any target to run it in a terminal
+- **🔍 Jump to Definition** — Click the inline icon or right-click → "Go to Target Definition"
 - **📝 Description Support** — Extracts `##` comments (above-target and inline) as descriptions
 - **🔄 Auto-Refresh** — Watches for file changes; tree stays in sync
 - **🛡️ Smart Filtering** — Skips `.PHONY`, variable assignments, and empty targets
@@ -35,8 +35,8 @@ Built for the monorepo reality: multiple Makefiles, nested directories, dozens o
 1. Open a project that contains Makefiles
 2. Click the **"Make Targets"** view in the Explorer sidebar
 3. Expand a Makefile node to see its targets
-4. **Click** a target → executes `make <target>` in the terminal
-5. **Right-click** → "Go to Definition" → opens the Makefile at the target's line
+4. **Double-click** a target → executes `make <target>` in the terminal
+5. **Click the 📎 icon** or **right-click** → "Go to Definition" → opens the Makefile at the target's line
 
 ### Target comments
 
@@ -76,15 +76,13 @@ See the [GitHub issues](https://github.com/dong4j/makefile-explorer/issues) for 
 
 ## Release Notes
 
-### 0.1.0
+### 0.3.0
 
-Initial release:
-- Tree view with auto-discovery of Makefiles
-- Click to execute targets in terminal
-- Right-click to jump to definition
-- `##` comment extraction (above-target and inline)
-- File watcher auto-refresh
-- Third-party dependency exclusion
+- Double-click to execute targets (prevents accidental triggers)
+- Inline icon button for quick jump-to-definition
+- GitHub Actions CI + auto-release to Marketplace
+- Chinese README (`README-ZH.md`)
+- Automated release flow via `make release`
 
 ---
 

@@ -1,6 +1,6 @@
 # Makefile Explorer
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/dong4j/makefile-explorer)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/dong4j/makefile-explorer)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![VSCode](https://img.shields.io/badge/vscode-%5E1.85.0-007ACC)](https://code.visualstudio.com/)
 
@@ -13,16 +13,16 @@
 当 Makefile 有 50+ 个 targets 时，在扁平文本文件里找一个目标命令非常痛苦。Makefile Explorer 把每个 Makefile 看作一个可执行命令的文件夹：
 
 - **展开** Makefile 节点 → 所有 targets 一览无余
-- **点击** target → 在终端执行 `make <target>`
-- **点击右侧图标** → 一键跳转到 Makefile 定义行
+- **双击** target → 在终端执行 `make <target>`（防误触）
+- **点击右侧 📎 图标** → 一键跳转到 Makefile 定义行
 
 专为 monorepo 场景设计：多个 Makefile、嵌套目录、几十个 targets——全部组织在一棵树里。
 
 ## 功能
 
 - **🌲 树形视图** —— targets 按 Makefile 分组，展示在资源管理器侧边栏
-- **▶ 一键执行** —— 点击任意 target 即可在终端运行
-- **🔍 跳转定义** —— 点击右侧图标或右键 → "Go to Target Definition"，精确跳转到定义行
+- **▶ 双击执行** —— 双击任意 target 在终端运行（防误触）
+- **🔍 跳转定义** —— 点击右侧 📎 图标或右键 → "Go to Target Definition"，精确跳转到定义行
 - **📝 注释支持** —— 提取 `##` 注释（上方注释和同行注释）作为描述
 - **🔄 自动刷新** —— 监听文件变化，树保持同步
 - **🛡️ 智能过滤** —— 跳过 `.PHONY`、变量赋值、空 targets
@@ -34,7 +34,7 @@
 1. 打开包含 Makefile 的项目
 2. 点击资源管理器侧边栏的 **"Make Targets"** 视图
 3. 展开 Makefile 节点查看所有 targets
-4. **点击** target → 在终端执行 `make <target>`
+4. **双击** target → 在终端执行 `make <target>`
 5. **点击右侧 📎 图标** 或 **右键** → "Go to Definition" → 跳转到 Makefile 对应行
 
 ### Target 注释
@@ -75,15 +75,13 @@ test: ## 运行完整测试套件
 
 ## 更新日志
 
-### 0.1.0
+### 0.3.0
 
-首次发布：
-- 树形视图 + Makefile 自动发现
-- 点击执行 target
-- 内联图标 + 右键菜单跳转定义
-- `##` 注释提取（上方注释 + 同行注释）
-- 文件监听自动刷新
-- 第三方依赖目录过滤
+- 双击执行 target（防误触）
+- 内联图标一键跳转定义
+- GitHub Actions CI + Marketplace 自动发布
+- 中文文档（README-ZH.md）
+- `make release` 自动化发布流程
 
 ---
 
