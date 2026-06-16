@@ -84,7 +84,7 @@ vsce login dong4j
   "icon": "icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dong4j/makefile-explorer"
+    "url": "https://github.com/dong4j/vscode-makefile-explorer"
   },
   "categories": ["Programming Languages", "Other"],
   "keywords": ["makefile", "make", "build", "task runner", "targets"],

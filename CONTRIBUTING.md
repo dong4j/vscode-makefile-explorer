@@ -69,7 +69,7 @@ extension.ts (activate)
 
 ## Reporting Bugs
 
-Please use the [Bug Report](https://github.com/dong4j/makefile-explorer/issues/new?template=bug_report.md) template and include:
+Please use the [Bug Report](https://github.com/dong4j/vscode-makefile-explorer/issues/new?template=bug_report.md) template and include:
 
 - VSCode version
 - Extension version
@@ -79,7 +79,7 @@ Please use the [Bug Report](https://github.com/dong4j/makefile-explorer/issues/n
 
 ## Feature Requests
 
-Use the [Feature Request](https://github.com/dong4j/makefile-explorer/issues/new?template=feature_request.md) template. Describe the use case and why the feature would be valuable.
+Use the [Feature Request](https://github.com/dong4j/vscode-makefile-explorer/issues/new?template=feature_request.md) template. Describe the use case and why the feature would be valuable.
 
 ## Code Style
 

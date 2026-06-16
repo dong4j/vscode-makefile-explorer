@@ -1,6 +1,6 @@
 # Makefile Explorer
 
-[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/dong4j/makefile-explorer)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/dong4j/vscode-makefile-explorer)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![VSCode](https://img.shields.io/badge/vscode-%5E1.85.0-007ACC)](https://code.visualstudio.com/)
 [![中文文档](https://img.shields.io/badge/文档-中文-red)](README-ZH.md)
@@ -72,7 +72,7 @@ Above-target comments take priority over inline `##` comments.
 - Very large workspaces (1000+ Makefiles) may have a slight delay on first scan
 - Targets with complex variable expansions in their names may not be detected
 
-See the [GitHub issues](https://github.com/dong4j/makefile-explorer/issues) for the full list.
+See the [GitHub issues](https://github.com/dong4j/vscode-makefile-explorer/issues) for the full list.
 
 ## Release Notes
 

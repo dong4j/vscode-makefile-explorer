@@ -62,4 +62,4 @@ release: compile ## 发布新版本（⚠️ 先更新 CHANGELOG.md，再修改 
 	@echo "   2. 构建 .vsix"
 	@echo "   3. 上传到 GitHub Release"
 	@echo ""
-	@echo "🔗 https://github.com/dong4j/makefile-explorer/releases"
+	@echo "🔗 https://github.com/dong4j/vscode-makefile-explorer/releases"

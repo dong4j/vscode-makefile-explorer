@@ -1,6 +1,6 @@
 # Makefile Explorer
 
-[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/dong4j/makefile-explorer)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/dong4j/vscode-makefile-explorer)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![VSCode](https://img.shields.io/badge/vscode-%5E1.85.0-007ACC)](https://code.visualstudio.com/)
 
@@ -71,7 +71,7 @@ test: ## 运行完整测试套件
 - 超大型工作区（1000+ Makefiles）首次扫描可能有轻微延迟
 - 名称包含复杂变量展开的 targets 可能无法识别
 
-完整列表见 [GitHub Issues](https://github.com/dong4j/makefile-explorer/issues)。
+完整列表见 [GitHub Issues](https://github.com/dong4j/vscode-makefile-explorer/issues)。
 
 ## 更新日志
 
