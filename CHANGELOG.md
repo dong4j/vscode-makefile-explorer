@@ -5,6 +5,33 @@ All notable changes to the "makefile-explorer" extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-06-16
+
+### Changed
+
+- **Double-click to execute** — targets now require a double-click to run, preventing accidental triggers from single clicks
+
+### Fixed
+
+- Makefile `release` target no longer blocks on VERSION edits (removed overzealous pre-check)
+
+## [0.2.0] - 2026-06-15
+
+### Added
+
+- **Inline "Go to Definition" button** — each target now has a clickable icon to jump directly to its definition line
+- **Chinese README** (`README-ZH.md`) with language badge on main README
+- **GitHub Actions CI** — compile check on every push and PR
+- **GitHub Actions Release** — auto-publish to VSCode Marketplace + GitHub Release on tag push
+- **Makefile** with `VERSION` variable — `make release` automates version bump, commit, tag, and push
+- **Marketplace publishing guide** (`docs/vscode-marketplace-publishing.md`)
+- Extension icon
+
+### Changed
+
+- Right-click menu now only shows "Go to Definition" (inline button replaces the old inline run button)
+- Updated `package.json` description, categories, and keywords for Marketplace
+
 ## [0.1.0] - 2026-06-15
 
 ### Added
@@ -20,4 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Smart target filtering (skips `.PHONY`, variable assignments, empty targets)
 - Dedicated "Make" terminal (reuses existing terminal to avoid tab spam)
 
+[0.3.0]: https://github.com/dong4j/makefile-explorer/releases/tag/v0.3.0
+[0.2.0]: https://github.com/dong4j/makefile-explorer/releases/tag/v0.2.0
 [0.1.0]: https://github.com/dong4j/makefile-explorer/releases/tag/v0.1.0

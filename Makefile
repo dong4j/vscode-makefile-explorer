@@ -39,13 +39,15 @@ clean: ## 清理编译产物和 .vsix
 
 # ---- 发布 ----
 
-release: compile ## 发布新版本（自动更新 package.json + 提交 + 打 tag + 推送）
+release: compile ## 发布新版本（⚠️ 先更新 CHANGELOG.md，再修改 VERSION，最后执行）
 	@echo "==> 📋 发布版本: v$(VERSION)"
 	@echo ""
+	@echo "⚠️  确认 CHANGELOG.md 已更新？(Ctrl-C 取消，回车继续)"
+	@read _
 	@echo "==> 更新 package.json 版本号为 $(VERSION)..."
 	@node -e "var p=require('./package.json');p.version='$(VERSION)';require('fs').writeFileSync('./package.json',JSON.stringify(p,null,2)+'\n')"
 	@echo "==> 提交版本更新..."
-	git add Makefile package.json
+	git add Makefile package.json CHANGELOG.md
 	git commit -m "chore: bump to v$(VERSION)"
 	@echo "==> 推送 main 分支..."
 	git push origin main
