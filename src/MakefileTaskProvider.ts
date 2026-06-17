@@ -40,6 +40,17 @@ export interface MakefileTaskDefinition extends vscode.TaskDefinition {
 export function createMakeTask(targetName: string, makefilePath: string): vscode.Task {
   const makefileDir = path.dirname(makefilePath);
   const fileName = path.basename(makefilePath);
+
+  // 计算相对于工作区根的路径，用于在「运行任务」面板中按 Makefile 分组显示
+  let source = fileName;
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (workspaceFolders && workspaceFolders.length > 0) {
+    const relative = path.relative(workspaceFolders[0].uri.fsPath, makefilePath);
+    // 去掉文件名，保留目录部分作为分组标识
+    const dir = path.dirname(relative);
+    source = dir === '.' ? fileName : `${dir}/${fileName}`;
+  }
+
   const definition: MakefileTaskDefinition = {
     type: MAKEFILE_TASK_TYPE,
     target: targetName,
@@ -50,7 +61,7 @@ export function createMakeTask(targetName: string, makefilePath: string): vscode
     definition,
     vscode.TaskScope.Workspace,
     `Make: ${targetName}`,
-    MAKEFILE_TASK_TYPE,
+    source,
     new vscode.ShellExecution(`make -f ${fileName} ${targetName}`, { cwd: makefileDir })
   );
 

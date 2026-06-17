@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Running status indicator** — status bar shows 🔄 while a Make task is executing, ✅ for 3 seconds on completion
 - **Target dependency display** — expand a target node to see its dependencies (from `target: dep1 dep2`); dependency nodes are informational leaf items with `symbol-parameter` icon
 - **make availability check** — on activation, verifies `make` is in PATH and shows a warning with install link if not found
+- **Task grouped by Makefile** — in the "Tasks: Run Task" palette, tasks are now grouped by their Makefile path (e.g., `src/Makefile`) instead of all being under a flat `makefile-explorer` group
 
 ### Changed
 
