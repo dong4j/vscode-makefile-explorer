@@ -5,18 +5,18 @@ All notable changes to the "vscode-makefile-explorer" extension will be document
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.5.0] - 2026-06-18
 
 ### Added
 
-- **Running status indicator** — status bar shows 🔄 while a Make task is executing, ✅ for 3 seconds on completion
-- **Target dependency display** — expand a target node to see its dependencies (from `target: dep1 dep2`); dependency nodes are informational leaf items with `symbol-parameter` icon
-- **make availability check** — on activation, verifies `make` is in PATH and shows a warning with install link if not found
-- **Task grouped by Makefile** — in the "Tasks: Run Task" palette, tasks are now grouped by their Makefile path (e.g., `src/Makefile`) instead of all being under a flat `makefile-explorer` group
+- **Running status indicator** — status bar shows `$(sync~spin)` while a Make task runs, `$(check)` on completion (auto-hides after 3s)
+- **Target dependency display** — expand a target node to see its dependencies (extracted from `target: dep1 dep2`); dependency nodes are informational leaf items
+- **make availability check** — on activation, verifies `make` is in PATH and shows a warning with GNU Make install link if not found
+- **Task grouped by Makefile** — in the "Tasks: Run Task" command palette, tasks are now grouped by their source Makefile path (e.g. `docker/Makefile`) instead of a flat list
 
 ### Changed
 
-- **Task presentation options** — each task now uses `Dedicated` terminal panel (different targets don't share a terminal), `echo: false` for cleaner output, and `focus: true` to switch focus on execution
+- **Task presentation options** — each task now uses `Dedicated` terminal panel (different targets don't share a terminal), `echo: false` for cleaner output, and `focus: true` to auto-switch focus on execution
 
 ## [0.4.0] - 2026-06-17
 

@@ -1,6 +1,6 @@
 # Makefile Explorer
 
-[![Version](https://img.shields.io/badge/version-0.4.0-blue)](https://github.com/dong4j/vscode-makefile-explorer)
+[![Version](https://img.shields.io/badge/version-0.5.0-blue)](https://github.com/dong4j/vscode-makefile-explorer)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![VSCode](https://img.shields.io/badge/vscode-%5E1.85.0-007ACC)](https://code.visualstudio.com/)
 
@@ -21,9 +21,12 @@
 ## 功能
 
 - **🌲 树形视图** —— targets 按 Makefile 分组，展示在资源管理器侧边栏
-- **▶ 双击执行** —— 双击任意 target 在独立终端运行（每次执行创建新终端 `Make - <target>`，不会与正在运行的命令冲突）
+- **▶ 双击执行** —— 双击任意 target 通过 Task API 在独立终端运行
 - **🔍 跳转定义** —— 点击右侧 📎 图标或右键 → "Go to Target Definition"，精确跳转到定义行
-- **📎 依赖展示** —— 展开 target 可查看依赖项，一目了然
+- **📎 依赖展示** —— 展开 target 可查看依赖项（从 `target: dep1 dep2` 解析），一目了然
+- **📊 状态栏指示** —— VSCode 状态栏显示 Make 任务执行中 / 完成状态
+- **🔔 make 可用性检测** —— 启动时检测 `make` 是否在 PATH 中，不可用则弹警告
+- **📦 任务分组** —— 「运行任务」面板中按 Makefile 路径分组，不再扁平排列
 - **📝 注释支持** —— 提取 `##` 注释（上方注释和同行注释）作为描述
 - **🔄 自动刷新** —— 监听文件变化，树保持同步
 - **🛡️ 智能过滤** —— 跳过 `.PHONY`、变量赋值、空 targets
@@ -76,6 +79,19 @@ test: ## 运行完整测试套件
 
 ## 更新日志
 
+### 0.5.0
+
+- 状态栏指示器（执行中 / 完成自动隐藏）
+- Target 依赖展示（展开 target 查看依赖项）
+- 启动时 make 可用性检测
+- 「运行任务」面板按 Makefile 分组
+- 优化终端展示（独立面板、不回显命令、自动聚焦）
+
+### 0.4.0
+
+- Task API 执行（替代原始 `sendText`）
+- 每次执行独立终端，避免命令冲突
+
 ### 0.3.0
 
 - 双击执行 target（防误触）
@@ -108,10 +124,11 @@ npm run package
 
 ```
 src/
-├── extension.ts              # 入口：TreeView + 命令注册
-├── MakefileTreeProvider.ts   # TreeDataProvider：扫描 + 构建树
-├── TargetParser.ts           # Makefile 解析器：提取 targets
-└── types.ts                  # 类型定义
+├── extension.ts              # 入口：TreeView + 命令注册 + 状态栏
+├── MakefileTreeProvider.ts   # TreeDataProvider：扫描 + 构建树（含依赖节点）
+├── MakefileTaskProvider.ts   # Task API：任务创建 + 提供者注册
+├── TargetParser.ts           # Makefile 解析器：提取 targets + 依赖
+└── types.ts                  # 类型定义（Target, NodeType, MakefileNode）
 ```
 
 ## 参与贡献

@@ -1,6 +1,6 @@
 # Makefile Explorer
 
-[![Version](https://img.shields.io/badge/version-0.4.0-blue)](https://github.com/dong4j/vscode-makefile-explorer)
+[![Version](https://img.shields.io/badge/version-0.5.0-blue)](https://github.com/dong4j/vscode-makefile-explorer)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![VSCode](https://img.shields.io/badge/vscode-%5E1.85.0-007ACC)](https://code.visualstudio.com/)
 [![中文文档](https://img.shields.io/badge/文档-中文-red)](README-ZH.md)
@@ -22,9 +22,12 @@ Built for the monorepo reality: multiple Makefiles, nested directories, dozens o
 ## Features
 
 - **🌲 Tree View** — Targets grouped by Makefile in the Explorer sidebar
-- **▶ Double-Click Execute** — Double-click any target to run it in a dedicated terminal (each execution creates a fresh terminal, avoiding conflicts with running commands)
+- **▶ Double-Click Execute** — Double-click any target to run it in a dedicated terminal via Task API
 - **🔍 Jump to Definition** — Click the inline icon or right-click → "Go to Target Definition"
-- **📝 Dependency Display** — Expand a target to see its dependencies — informational leaf nodes under each target
+- **📎 Dependency Display** — Expand a target to see its dependencies (extracted from `target: dep1 dep2`)
+- **📊 Status Bar Indicator** — Shows running/completed status for Make tasks in the VSCode status bar
+- **🔔 Make Availability Check** — Warns on startup if `make` is not found in PATH
+- **📦 Task Grouping** — Tasks are grouped by Makefile in the "Run Task" command palette
 - **📝 Description Support** — Extracts `##` comments (above-target and inline) as descriptions
 - **🔄 Auto-Refresh** — Watches for file changes; tree stays in sync
 - **🛡️ Smart Filtering** — Skips `.PHONY`, variable assignments, and empty targets
@@ -77,6 +80,19 @@ See the [GitHub issues](https://github.com/dong4j/vscode-makefile-explorer/issue
 
 ## Release Notes
 
+### 0.5.0
+
+- Status bar indicator for running/completed Make tasks
+- Target dependency display (expand a target to see deps)
+- Make availability check on startup
+- Tasks grouped by Makefile in command palette
+- Improved terminal presentation (Dedicated panel, no echo, auto-focus)
+
+### 0.4.0
+
+- Task API execution (replaces raw terminal `sendText`)
+- Dedicated terminal per execution to avoid command conflicts
+
 ### 0.3.0
 
 - Double-click to execute targets (prevents accidental triggers)
@@ -109,10 +125,11 @@ Press **F5** in VSCode to launch the Extension Development Host for debugging.
 
 ```
 src/
-├── extension.ts              # Entry point: TreeView + command registration
-├── MakefileTreeProvider.ts   # TreeDataProvider: scan + build tree
-├── TargetParser.ts           # Makefile parser: extract targets
-└── types.ts                  # Type definitions
+├── extension.ts              # Entry point: TreeView + command registration + status bar
+├── MakefileTreeProvider.ts   # TreeDataProvider: scan + build tree (with dependency nodes)
+├── MakefileTaskProvider.ts   # Task API: task creation + provider registration
+├── TargetParser.ts           # Makefile parser: extract targets + dependencies
+└── types.ts                  # Type definitions (Target, NodeType, MakefileNode)
 ```
 
 ## Contributing

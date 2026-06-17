@@ -26,10 +26,11 @@ npm run package
 
 ```
 src/
-├── extension.ts              # Entry point — activation, command registration
-├── MakefileTreeProvider.ts   # TreeDataProvider implementation
-├── TargetParser.ts           # Makefile parsing logic
-└── types.ts                  # Shared type definitions
+├── extension.ts              # Entry point — activation, command registration, status bar
+├── MakefileTreeProvider.ts   # TreeDataProvider: scan workspace + build tree (with deps)
+├── MakefileTaskProvider.ts   # Task API: create tasks + register TaskProvider
+├── TargetParser.ts           # Makefile parsing: extract targets + dependencies
+└── types.ts                  # Shared type definitions (Target, NodeType, MakefileNode)
 ```
 
 ### Architecture
@@ -39,11 +40,18 @@ extension.ts (activate)
   ├── MakefileTreeProvider (TreeDataProvider)
   │   ├── scans workspace for Makefiles
   │   ├── calls TargetParser for each file
-  │   └── builds MakefileNode tree
+  │   └── builds MakefileNode tree (targets + dependency nodes)
+  ├── MakefileTaskProvider (TaskProvider)
+  │   ├── createMakeTask → builds vscode.Task with ShellExecution
+  │   ├── registerMakefileTaskProvider → custom task type
+  │   └── collectMakeTasks → provides tasks for "Run Task" palette
   ├── commands:
-  │   ├── runTarget → creates new `Make - <target>` terminal per execution
+  │   ├── handleTargetClick → double-click → executeTask
+  │   ├── runTarget → direct execution (no double-click)
   │   ├── goToDefinition → opens file, jumps to line
   │   └── refresh → re-scans workspace
+  ├── status bar: task start/end events → running/complete indicator
+  ├── make availability check: warns if make not in PATH
   └── file watcher → auto-refresh on changes
 ```
 
