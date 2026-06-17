@@ -95,7 +95,7 @@ export function activate(context: vscode.ExtensionContext): void {
       const definition = e.execution.task.definition as Record<string, unknown>;
       if (definition.type !== MAKEFILE_TASK_TYPE) return;
       const target = definition.target as string;
-      statusBarItem.text = `$(loading~spin) Make: ${target}`;
+      statusBarItem.text = `$(sync~spin) Make: ${target}`;
       statusBarItem.backgroundColor = undefined;
       statusBarItem.show();
     })
@@ -107,7 +107,7 @@ export function activate(context: vscode.ExtensionContext): void {
       const definition = e.execution.task.definition as Record<string, unknown>;
       if (definition.type !== MAKEFILE_TASK_TYPE) return;
       const target = definition.target as string;
-      statusBarItem.text = `$(pass) Make: ${target}`;
+      statusBarItem.text = `$(check) Make: ${target}`;
       statusBarItem.backgroundColor = undefined;
       statusBarItem.show();
       // 3 秒后自动隐藏
