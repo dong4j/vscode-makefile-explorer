@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Task presentation options** — each task now uses `Dedicated` terminal panel (different targets don't share a terminal), `echo: false` for cleaner output, and `focus: true` to switch focus on execution
+
 ## [0.4.0] - 2026-06-17
 
 ### Changed

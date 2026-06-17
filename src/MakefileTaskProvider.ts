@@ -56,6 +56,16 @@ export function createMakeTask(targetName: string, makefilePath: string): vscode
 
   task.detail = makefilePath;
   task.group = vscode.TaskGroup.Build;
+
+  task.presentationOptions = {
+    reveal: vscode.TaskRevealKind.Always,
+    echo: false,
+    focus: true,
+    panel: vscode.TaskPanelKind.Dedicated,
+    showReuseMessage: false,
+    clear: false
+  };
+
   return task;
 }
 
