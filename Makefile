@@ -63,8 +63,8 @@ release: compile ## 发布新版本（⚠️ 先更新 CHANGELOG.md，再修改 
 	fi
 	@echo "==> 推送 main 分支..."
 	git push origin main
-	@echo "==> 创建 tag v$(VERSION) 并推送..."
-	git tag v$(VERSION)
+	@echo "==> 在 main 分支 HEAD 创建 tag v$(VERSION) 并推送..."
+	git tag v$(VERSION) main
 	git push origin v$(VERSION)
 	@echo ""
 	@echo "✅ 发布完成！GitHub Actions 正在自动："
