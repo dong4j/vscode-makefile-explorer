@@ -103,6 +103,11 @@ export function parseTargets(content: string, filePath: string): Target[] {
       continue;
     }
 
+    // ---- 提取依赖（冒号后、## 前的内容）----
+    const afterColon = trimmed.substring(colonIndex + 1);
+    const depsText = afterColon.replace(INLINE_COMMENT_RE, '').trim();
+    const dependencies = depsText ? depsText.split(/\s+/) : [];
+
     // ---- 提取描述：上方注释优先，其次同行 ## 注释 ----
     let description = '';
     if (pendingComments.length > 0) {
@@ -120,7 +125,8 @@ export function parseTargets(content: string, filePath: string): Target[] {
       name: targetName,
       line: i,
       description,
-      filePath
+      filePath,
+      dependencies
     });
 
     // 清空待定注释（下一个 target 需要新的注释）

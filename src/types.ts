@@ -16,14 +16,17 @@ export interface Target {
   description: string;
   /** 所属 Makefile 文件的绝对路径 */
   filePath: string;
+  /** target 的依赖列表（冒号后的部分），如 ['src/main.c', 'utils.o'] */
+  dependencies: string[];
 }
 
 /**
- * 树节点的两种类型：
+ * 树节点的三种类型：
  * - 'makefile': Makefile 文件节点（可展开，包含 targets）
- * - 'target': Makefile 中的可操作命令节点
+ * - 'target': Makefile 中的可操作命令节点（可展开，包含 dependencies）
+ * - 'dependency': target 的依赖项（叶子节点，仅展示）
  */
-export type NodeType = 'makefile' | 'target';
+export type NodeType = 'makefile' | 'target' | 'dependency';
 
 /**
  * 树节点数据结构，TreeDataProvider 使用此类构建树
@@ -62,15 +65,26 @@ export class MakefileNode extends vscode.TreeItem {
         title: 'Open Makefile',
         arguments: [vscode.Uri.file(filePath)]
       };
-    } else {
+    } else if (nodeType === 'target') {
       // target 节点：双击 → 终端执行（防误触）
       this.iconPath = new vscode.ThemeIcon('symbol-method');
       this.contextValue = 'makefileTarget';
-      this.tooltip = `${filePath}:${targetLine + 1} — 双击执行，右侧图标跳转到定义`;
+      this.tooltip = `${filePath}:${targetLine + 1} — 双击执行，展开查看依赖`;
       this.command = {
         command: 'makefile-explorer.handleTargetClick',
         title: 'Handle Target Click',
         arguments: [{ name: label, filePath, line: targetLine }]
+      };
+    } else {
+      // dependency 节点：叶子节点，仅展示，不可执行
+      this.iconPath = new vscode.ThemeIcon('symbol-parameter');
+      this.contextValue = 'makefileDependency';
+      this.tooltip = `${filePath} — ${label}`;
+      // dependency 节点点击跳转到文件开头
+      this.command = {
+        command: 'makefile-explorer.goToDefinition',
+        title: 'Go to Definition',
+        arguments: [{ name: '', filePath, line: 0 }]
       };
     }
   }

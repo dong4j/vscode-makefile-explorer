@@ -8,8 +8,10 @@
  * 4. 提供刷新命令
  *
  * 树形结构：
- *   📄 /project/Makefile          ← makefile 节点（可展开）
- *     🎯 build                     ← target 节点（点击执行）
+ *   📄 /project/Makefile          ← makefile 节点（可展开 → targets）
+ *     🎯 build                     ← target 节点（可展开 → dependencies）
+ *       📎 src/main.c               ← dependency 节点（叶子）
+ *       📎 utils.o
  *     🎯 test
  *   📄 /project/docker/Makefile
  *     🎯 docker-build
@@ -94,7 +96,12 @@ export class MakefileTreeProvider implements vscode.TreeDataProvider<MakefileNod
       return element.children;
     }
 
-    // target 节点没有子节点
+    // target 节点：返回其依赖子节点
+    if (element.nodeType === 'target') {
+      return element.children;
+    }
+
+    // dependency 节点是叶子节点
     return [];
   }
 
@@ -114,6 +121,17 @@ export class MakefileTreeProvider implements vscode.TreeDataProvider<MakefileNod
     if (element.nodeType === 'target') {
       // 查找所属的 Makefile 文件节点
       return this.fileNodes.find(fn => fn.filePath === element.filePath);
+    }
+    if (element.nodeType === 'dependency') {
+      // 查找所属的 target 节点（通过 parentTargetName）
+      for (const fileNode of this.fileNodes) {
+        for (const targetNode of fileNode.children) {
+          if (targetNode.children.includes(element)) {
+            return targetNode;
+          }
+        }
+      }
+      return null;
     }
     // Makefile 文件节点是根节点，没有父节点
     return null;
@@ -215,10 +233,21 @@ function createTargetNode(target: Target, filePath: string): MakefileNode {
     node.description = target.description;
   }
 
+  // 有依赖时，target 可展开，子节点为依赖项
+  if (target.dependencies.length > 0) {
+    node.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+    node.children = target.dependencies.map(dep =>
+      new MakefileNode(dep, 'dependency', filePath, -1)
+    );
+  }
+
   // tooltip 显示完整信息
   node.tooltip = [
     `Target: ${target.name}`,
     target.description ? `描述: ${target.description}` : '',
+    target.dependencies.length > 0
+      ? `依赖: ${target.dependencies.join(', ')}`
+      : '',
     `位置: ${filePath}:${target.line + 1}`,
     '',
     '双击 — 执行任务',

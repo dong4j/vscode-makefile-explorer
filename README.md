@@ -24,6 +24,7 @@ Built for the monorepo reality: multiple Makefiles, nested directories, dozens o
 - **🌲 Tree View** — Targets grouped by Makefile in the Explorer sidebar
 - **▶ Double-Click Execute** — Double-click any target to run it in a dedicated terminal (each execution creates a fresh terminal, avoiding conflicts with running commands)
 - **🔍 Jump to Definition** — Click the inline icon or right-click → "Go to Target Definition"
+- **📝 Dependency Display** — Expand a target to see its dependencies — informational leaf nodes under each target
 - **📝 Description Support** — Extracts `##` comments (above-target and inline) as descriptions
 - **🔄 Auto-Refresh** — Watches for file changes; tree stays in sync
 - **🛡️ Smart Filtering** — Skips `.PHONY`, variable assignments, and empty targets
@@ -34,7 +35,7 @@ Built for the monorepo reality: multiple Makefiles, nested directories, dozens o
 
 1. Open a project that contains Makefiles
 2. Click the **"Make Targets"** view in the Explorer sidebar
-3. Expand a Makefile node to see its targets
+3. Expand a Makefile node to see its targets; expand a target node to see dependencies
 4. **Double-click** a target → executes `make <target>` in a dedicated terminal (each target gets its own terminal tab named `Make - <target>`)
 5. **Click the 📎 icon** or **right-click** → "Go to Definition" → opens the Makefile at the target's line
 
