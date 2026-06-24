@@ -25,6 +25,7 @@ import * as path from 'path';
 import { exec } from 'child_process';
 import { MakefileTreeProvider } from './providers/MakefileTreeProvider';
 import { createMakeTask, registerMakefileTaskProvider, MAKEFILE_TASK_TYPE } from './providers/MakefileTaskProvider';
+import { TaskHistoryService } from './services/TaskHistoryService';
 
 /** 双击判定窗口（毫秒） */
 const DOUBLE_CLICK_WINDOW_MS = 500;
@@ -76,6 +77,10 @@ export function activate(context: vscode.ExtensionContext): void {
   // ---- 创建 TreeDataProvider 并注册 TreeView ----
   const provider = new MakefileTreeProvider();
 
+  // ---- TaskHistoryService：持久化最近一次跑的 target（PR4 Run Last Task）----
+  // 用 context.globalState 跨 workspace 共享；切换项目后 last task 各自独立
+  const taskHistory = new TaskHistoryService(context);
+
   const treeView = vscode.window.createTreeView('makefileExplorer', {
     treeDataProvider: provider,
     showCollapseAll: true
@@ -103,11 +108,13 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   // 监听 task 结束事件，显示完成状态 3 秒后自动隐藏
+  // 同时记录到 TaskHistoryService，供 runLastTask 命令一键重跑（PR4）
   context.subscriptions.push(
     vscode.tasks.onDidEndTask((e) => {
       const definition = e.execution.task.definition as Record<string, unknown>;
       if (definition.type !== MAKEFILE_TASK_TYPE) return;
       const target = definition.target as string;
+      const makefilePath = definition.makefilePath as string;
       statusBarItem.text = `$(check) Make: ${target}`;
       statusBarItem.backgroundColor = undefined;
       statusBarItem.show();
@@ -115,6 +122,10 @@ export function activate(context: vscode.ExtensionContext): void {
       setTimeout(() => {
         statusBarItem.hide();
       }, 3000);
+      // 记录到 history（成功失败都记 —— 失败时方便一键重试）
+      if (target && makefilePath) {
+        taskHistory.record(target, makefilePath);
+      }
     })
   );
 
@@ -242,6 +253,34 @@ export function activate(context: vscode.ExtensionContext): void {
       provider.refresh();
       console.log('[Makefile Explorer] 手动刷新');
     })
+  );
+
+  /**
+   * 重跑最近一次的 Make target（PR4 新增）
+   *
+   * 用途：双击 target 执行后，用户经常想"再跑一次刚才那个"
+   * 提供 Alt+Shift+R（mac Option+Shift+R / Win Alt+Shift+R）一键重跑（keybinding 见 package.json）
+   *
+   * 历史数据来源：TaskHistoryService（context.globalState 持久化）
+   * 写入时机：onDidEndTask 监听器（task 结束无论成功失败都记）
+   *
+   * 空状态处理：getLast() 返回 undefined 时弹 warning，提示用户先跑一次
+   */
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'makefile-explorer.runLastTask',
+      async () => {
+        const last = taskHistory.getLast();
+        if (!last) {
+          vscode.window.showWarningMessage(
+            'Makefile Explorer: 暂无最近任务记录，请先双击 target 执行一次'
+          );
+          return;
+        }
+        console.log(`[Makefile Explorer] 重跑: Make: ${last.name} (${last.filePath})`);
+        await executeTarget(last.name, last.filePath);
+      }
+    )
   );
 
   /**
