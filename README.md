@@ -25,8 +25,12 @@ Built for the monorepo reality: multiple Makefiles, nested directories, dozens o
 - **▶ Double-Click Execute** — Double-click any target to run it in a dedicated terminal via Task API
 - **🔍 Jump to Definition** — Click the inline icon or right-click → "Go to Target Definition"
 - **📋 Copy Make Command** — Right-click a target → "Copy Make Command" to copy a terminal-ready command to clipboard
+- **⌨️ Run Last Task** — `Alt+Shift+R` (mac `Option+Shift+R`) reruns the most recent target; persists across Dev Host restarts
+- **🧪 Run with Args...** — Right-click a target → "Run with Args..." to pass `KEY=VALUE` pairs (e.g. `VERSION=0.1.0`) to the make command
+- **📜 View as List** — Toggle button in the view title bar to switch between tree view and a flat list of all targets (label `targetName [path/to/Makefile]`)
+- **✓✗ Target Status Badges** — Each target shows a green check or red cross after running; status persists in `context.globalState` (FIFO-capped at 50)
 - **📎 Dependency Display** — Expand a target to see its dependencies (extracted from `target: dep1 dep2`)
-- **📊 Status Bar Indicator** — Shows running/completed status for Make tasks in the VSCode status bar
+- **📊 Status Bar Indicator** — Shows running/completed status for Make tasks in the VSCode status bar; tints red on failure
 - **🔔 Make Availability Check** — Warns on startup if `make` is not found in PATH
 - **📦 Task Grouping** — Tasks are grouped by Makefile in the "Run Task" command palette
 - **📝 Description Support** — Extracts `##` comments (above-target and inline) as descriptions

@@ -2,7 +2,7 @@
   "name": "makefile-explorer",
   "displayName": "Makefile Explorer",
   "description": "Browse and run Makefile targets in a tree view — double-click to run, click icon to jump to definition",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "publisher": "dong4j",
   "license": "MIT",
   "repository": {
@@ -62,9 +62,29 @@
         "icon": "$(copy)"
       },
       {
+        "command": "makefile-explorer.runLastTask",
+        "title": "Run Last Make Task",
+        "icon": "$(history)"
+      },
+      {
+        "command": "makefile-explorer.runWithArgs",
+        "title": "Run with Args...",
+        "icon": "$(terminal)"
+      },
+      {
         "command": "makefile-explorer.refresh",
         "title": "Refresh Makefile Targets",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "makefile-explorer.toggleViewMode",
+        "title": "Toggle View Mode (Tree / Flat)",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "makefile-explorer.clearTaskStatus",
+        "title": "Clear Task Status",
+        "icon": "$(clear-all)"
       }
     ],
     "taskDefinitions": [
@@ -92,37 +112,65 @@
           "command": "makefile-explorer.refresh",
           "when": "view == makefileExplorer",
           "group": "navigation"
+        },
+        {
+          "command": "makefile-explorer.toggleViewMode",
+          "when": "view == makefileExplorer",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "makefile-explorer.goToDefinition",
+          "command": "makefile-explorer.runWithArgs",
           "when": "viewItem == makefileTarget",
           "group": "inline"
         },
         {
           "command": "makefile-explorer.goToDefinition",
           "when": "viewItem == makefileTarget",
+          "group": "inline@1"
+        },
+        {
+          "command": "makefile-explorer.runWithArgs",
+          "when": "viewItem == makefileTarget",
           "group": "navigation@1"
+        },
+        {
+          "command": "makefile-explorer.goToDefinition",
+          "when": "viewItem == makefileTarget",
+          "group": "navigation@2"
         },
         {
           "command": "makefile-explorer.copyMakeCommand",
           "when": "viewItem == makefileTarget",
-          "group": "navigation@2"
+          "group": "navigation@3"
         }
       ]
-    }
+    },
+    "keybindings": [
+      {
+        "command": "makefile-explorer.runLastTask",
+        "key": "shift+alt+r",
+        "mac": "shift+alt+r",
+        "when": "editorTextFocus"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "compile": "node esbuild.config.mjs",
+    "compile:tsc": "tsc -p ./",
+    "watch": "node esbuild.config.mjs --watch",
     "lint": "eslint src --ext ts",
+    "test": "mocha",
     "package": "vsce package"
   },
   "devDependencies": {
-    "@types/vscode": "^1.85.0",
     "@types/node": "^20.x",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.20.0",
+    "esbuild-runner": "^2.2.2",
+    "mocha": "^11.7.6",
     "typescript": "^5.4.0"
   }
 }
