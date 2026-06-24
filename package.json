@@ -62,6 +62,11 @@
         "icon": "$(copy)"
       },
       {
+        "command": "makefile-explorer.runLastTask",
+        "title": "Run Last Make Task",
+        "icon": "$(history)"
+      },
+      {
         "command": "makefile-explorer.refresh",
         "title": "Refresh Makefile Targets",
         "icon": "$(refresh)"
@@ -111,7 +116,15 @@
           "group": "navigation@2"
         }
       ]
-    }
+    },
+    "keybindings": [
+      {
+        "command": "makefile-explorer.runLastTask",
+        "key": "shift+alt+r",
+        "mac": "shift+alt+r",
+        "when": "editorTextFocus"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
