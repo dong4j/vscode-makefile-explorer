@@ -5,6 +5,24 @@ All notable changes to the "vscode-makefile-explorer" extension will be document
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-06-25
+
+### Added
+
+- **Run Last Task** — `Alt+Shift+R` (mac `Option+Shift+R`) one-key rerun of the most recent Make target; powered by `context.globalState` so it persists across Dev Host restarts
+- **Run with Args...** — right-click a target → "Run with Args..." opens an input box for `KEY=VALUE` pairs (e.g. `VERSION=0.1.0 DEBUG=1`) appended to the `make` command
+- **View as List** — toggle button in the view title bar switches between `tree` (Makefile → target → dependency) and `flat` (all targets at the root, label `targetName [path/to/Makefile]`); useful for projects with 20+ targets
+- **Target status badges** — target nodes show `$(check)` (green) or `$(error)` (red) after each run; persisted via `context.globalState` and survives Dev Host restarts (FIFO-capped at 50 records)
+- **Status bar failure highlight** — failed runs briefly tint the status bar with `statusBarItem.errorBackground`
+- **Clear Task Status** — command-palette command to wipe all target status badges (does not affect Run Last Task history)
+
+### Changed
+
+- **Layered architecture** — source reorganized into `models/` (pure data), `providers/` (VSCode adapters), `services/` (business logic), `test/` (mocha specs); enables isolated unit testing of non-UI code
+- **Build chain migration: tsc → esbuild** — `npm run compile` now uses esbuild bundling (`esbuild.config.mjs`); full bundle ~25 KB, build time ~5 ms. `compile:tsc` retained as fallback
+- **Test framework: mocha + esbuild-runner** — 53 unit tests run directly on TypeScript without pre-compilation; `npm test`
+- **Double-click behavior reverted to direct run** — PR5 originally opened an input box on double-click; in v0.7.0 the double-click handler runs the target directly again, and parameter input is moved to the right-click menu
+
 ## [0.6.0] - 2026-06-21
 
 ### Added
