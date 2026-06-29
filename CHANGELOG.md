@@ -5,6 +5,13 @@ All notable changes to the "vscode-makefile-explorer" extension will be document
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-06-29
+
+### Added
+
+- **Run in Background** — right-click a target → "Run in Background" executes the target silently without switching focus or popping up the terminal; status bar still shows running/completed indicators and target badges update as usual
+- **Configurable double-click behavior** — new setting `makefile-explorer.defaultRunMode` controls whether double-click runs targets in `foreground` (terminal + focus, default) or `background` (silent, no focus switch); selectable via Settings UI dropdown
+
 ## [0.7.0] - 2026-06-25
 
 ### Added
@@ -95,6 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Smart target filtering (skips `.PHONY`, variable assignments, empty targets)
 - Dedicated "Make" terminal (reuses existing terminal to avoid tab spam)
 
+[0.8.0]: https://github.com/dong4j/vscode-makefile-explorer/releases/tag/v0.8.0
 [0.7.0]: https://github.com/dong4j/vscode-makefile-explorer/releases/tag/v0.7.0
 [0.6.0]: https://github.com/dong4j/vscode-makefile-explorer/releases/tag/v0.6.0
 [0.5.0]: https://github.com/dong4j/vscode-makefile-explorer/releases/tag/v0.5.0

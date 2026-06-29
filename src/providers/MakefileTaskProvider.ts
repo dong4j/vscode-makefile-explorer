@@ -31,11 +31,13 @@ export interface MakefileTaskDefinition extends vscode.TaskDefinition {
  * @param makefilePath Makefile 绝对路径
  * @param args 可选，make 命令的额外参数（如 ['VERSION=0.1.0']）
  *              —— PR5 Run with Args 引入
+ * @param background 可选，true 时静默执行不弹出终端（PR8 Run in Background 引入）
  */
 export function createMakeTask(
   targetName: string,
   makefilePath: string,
-  args: string[] = []
+  args: string[] = [],
+  background: boolean = false
 ): vscode.Task {
   const makefileDir = path.dirname(makefilePath);
   const fileName = path.basename(makefilePath);
@@ -76,10 +78,13 @@ export function createMakeTask(
   task.detail = makefilePath;
   task.group = vscode.TaskGroup.Build;
 
+  // PR8 Run in Background：background=true 时静默执行，不弹出终端、不抢焦点
   task.presentationOptions = {
-    reveal: vscode.TaskRevealKind.Always,
+    reveal: background
+      ? vscode.TaskRevealKind.Silent
+      : vscode.TaskRevealKind.Always,
     echo: false,
-    focus: true,
+    focus: !background,
     panel: vscode.TaskPanelKind.Dedicated,
     showReuseMessage: false,
     clear: false

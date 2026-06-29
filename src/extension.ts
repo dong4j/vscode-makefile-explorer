@@ -160,13 +160,15 @@ export function activate(context: vscode.ExtensionContext): void {
    * @param targetName target 名
    * @param filePath Makefile 绝对路径
    * @param args 可选 make 额外参数（PR5 Run with Args 引入）
+   * @param background 可选，true 时静默执行不弹出终端（PR8 Run in Background 引入）
    */
   async function executeTarget(
     targetName: string,
     filePath: string,
-    args: string[] = []
+    args: string[] = [],
+    background: boolean = false
   ): Promise<void> {
-    const task = createMakeTask(targetName, filePath, args);
+    const task = createMakeTask(targetName, filePath, args, background);
     try {
       await vscode.tasks.executeTask(task);
       const argInfo = args.length ? ` (args: ${args.join(' ')})` : '';
@@ -205,7 +207,12 @@ export function activate(context: vscode.ExtensionContext): void {
         lastClick = { name: info.name, filePath: info.filePath, time: now };
 
         if (isDoubleClick) {
-          executeTarget(info.name, info.filePath);
+          // PR8：读取用户配置的默认运行模式（foreground / background）
+          const runMode = vscode.workspace
+            .getConfiguration('makefile-explorer')
+            .get<string>('defaultRunMode', 'foreground');
+          const background = runMode === 'background';
+          executeTarget(info.name, info.filePath, [], background);
         }
       }
     )
@@ -263,6 +270,30 @@ export function activate(context: vscode.ExtensionContext): void {
           return;
         }
         await executeTarget(info.name, info.filePath, makeArgs);
+      }
+    )
+  );
+
+  /**
+   * 右键菜单「Run in Background」：静默执行 make target，不弹出终端、不抢焦点（PR8 Run in Background）
+   *
+   * 与双击 / Run with Args 的区别：
+   * - 双击 / Run with Args → TaskRevealKind.Always + focus:true（弹出终端、抢焦点）
+   * - Run in Background   → TaskRevealKind.Silent + focus:false（静默执行、不跳终端）
+   *
+   * 静默执行期间用户仍可通过状态栏 $(sync~spin) 感知运行状态，
+   * 完成后状态栏显示 $(check)/$(error) 3 秒 + 节点徽标更新。
+   */
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'makefile-explorer.runInBackground',
+      (args: Record<string, unknown> | undefined) => {
+        const info = normalizeArgs(args);
+        if (!info) {
+          vscode.window.showWarningMessage('请从 Make Targets 面板右键使用此功能');
+          return;
+        }
+        executeTarget(info.name, info.filePath, [], true);
       }
     )
   );

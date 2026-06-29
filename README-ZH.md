@@ -1,6 +1,6 @@
 # Makefile Explorer
 
-[![Version](https://img.shields.io/badge/version-0.7.0-blue)](https://github.com/dong4j/vscode-makefile-explorer)
+[![Version](https://img.shields.io/badge/version-0.8.0-blue)](https://github.com/dong4j/vscode-makefile-explorer)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![VSCode](https://img.shields.io/badge/vscode-%5E1.85.0-007ACC)](https://code.visualstudio.com/)
 
@@ -24,6 +24,11 @@
 - **▶ 双击执行** —— 双击任意 target 通过 Task API 在独立终端运行
 - **🔍 跳转定义** —— 点击右侧 📎 图标或右键 → "Go to Target Definition"，精确跳转到定义行
 - **📋 复制 Make 命令** —— 右键 target → "Copy Make Command"，将终端可执行命令复制到剪贴板
+- **⌨️ 重跑上次任务** —— `Alt+Shift+R`（mac `Option+Shift+R`）一键重跑最近一次 target；跨 Dev Host 重启持久保留
+- **🧪 带参数运行** —— 右键 target → "Run with Args..." 弹输入框，输入 `KEY=VALUE` 对（如 `VERSION=0.1.0`）传递给 make 命令
+- **🤫 后台运行** —— 右键 target → "Run in Background" 静默执行，不弹出终端、不抢焦点
+- **⚙️ 配置双击行为** —— 设置项 `makefile-explorer.defaultRunMode` 可选 `foreground`（弹终端，默认）或 `background`（静默执行）
+- **✓✗ 状态徽标** —— target 执行后在节点上显示绿色 ✓ 或红色 ✗；数据跨重启持久（FIFO 上限 50 条）
 - **📎 依赖展示** —— 展开 target 可查看依赖项（从 `target: dep1 dep2` 解析），一目了然
 - **📊 状态栏指示** —— VSCode 状态栏显示 Make 任务执行中 / 完成状态
 - **🔔 make 可用性检测** —— 启动时检测 `make` 是否在 PATH 中，不可用则弹警告
@@ -39,9 +44,11 @@
 1. 打开包含 Makefile 的项目
 2. 点击资源管理器侧边栏的 **"Make Targets"** 视图
 3. 展开 Makefile 节点查看所有 targets；展开 target 节点查看依赖项
-4. **双击** target → 在独立终端执行 `make <target>`（每个 target 在独立终端 `Make - <target>` 中运行）
+4. **双击** target → 执行 `make <target>`（行为可通过 `makefile-explorer.defaultRunMode` 设置切换：`foreground` 弹终端，`background` 静默执行）
 5. **点击右侧 📎 图标** 或 **右键** → "Go to Definition" → 跳转到 Makefile 对应行
 6. **右键** target → "Copy Make Command" → 将 `cd "目录" && make -f Makefile <target>` 复制到剪贴板
+7. **右键** target → "Run in Background" → 静默执行，不切换焦点
+8. **右键** target → "Run with Args..." → 弹输入框输入 `KEY=VALUE` 对后执行
 
 ### Target 注释
 
@@ -61,11 +68,9 @@ test: ## 运行完整测试套件
 
 ## 插件设置
 
-*此插件暂无配置项——后续版本会增加。*
-
 | 设置项 | 类型 | 默认值 | 说明 |
 |-------|------|--------|------|
-| *（暂无，后续版本加入）* | | | |
+| `makefile-explorer.defaultRunMode` | `string` | `"foreground"` | 双击行为：`"foreground"`（弹终端 + 抢焦点）或 `"background"`（静默执行，不抢焦点） |
 
 ## 环境要求
 
@@ -103,11 +108,24 @@ npm run package
 
 ```
 src/
-├── extension.ts              # 入口：TreeView + 命令注册 + 状态栏
-├── MakefileTreeProvider.ts   # TreeDataProvider：扫描 + 构建树（含依赖节点）
-├── MakefileTaskProvider.ts   # Task API：任务创建 + 提供者注册
-├── TargetParser.ts           # Makefile 解析器：提取 targets + 依赖
-└── types.ts                  # 类型定义（Target, NodeType, MakefileNode）
+├── extension.ts                    # 入口：TreeView + 命令注册 + 状态栏
+├── models/
+│   ├── MakefileNode.ts             # TreeItem 子类（makefile / target / dependency 节点）
+│   └── Target.ts                   # 类型定义（Target, NodeType）
+├── providers/
+│   ├── MakefileTreeProvider.ts     # TreeDataProvider：扫描 + 构建树 + 视图模式
+│   └── MakefileTaskProvider.ts     # Task API：任务创建 + 提供者注册
+├── services/
+│   ├── MakefileScanner.ts          # 工作区 Makefile 扫描 + 节点构建
+│   ├── TargetParser.ts             # Makefile 解析器：提取 targets + 依赖
+│   ├── TaskHistoryService.ts       # 持久化任务历史 + target 状态徽标
+│   ├── ArgsPromptService.ts        # KEY=VALUE 参数输入框
+│   └── argsParser.ts               # 参数解析
+└── test/
+    ├── MakefileTreeProvider.test.ts
+    ├── TargetParser.test.ts
+    ├── TaskHistoryService.test.ts
+    └── ArgsPromptService.test.ts
 ```
 
 ## 参与贡献

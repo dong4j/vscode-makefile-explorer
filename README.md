@@ -1,6 +1,6 @@
 # Makefile Explorer
 
-[![Version](https://img.shields.io/badge/version-0.7.0-blue)](https://github.com/dong4j/vscode-makefile-explorer)
+[![Version](https://img.shields.io/badge/version-0.8.0-blue)](https://github.com/dong4j/vscode-makefile-explorer)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![VSCode](https://img.shields.io/badge/vscode-%5E1.85.0-007ACC)](https://code.visualstudio.com/)
 [![中文文档](https://img.shields.io/badge/文档-中文-red)](README-ZH.md)
@@ -27,6 +27,8 @@ Built for the monorepo reality: multiple Makefiles, nested directories, dozens o
 - **📋 Copy Make Command** — Right-click a target → "Copy Make Command" to copy a terminal-ready command to clipboard
 - **⌨️ Run Last Task** — `Alt+Shift+R` (mac `Option+Shift+R`) reruns the most recent target; persists across Dev Host restarts
 - **🧪 Run with Args...** — Right-click a target → "Run with Args..." to pass `KEY=VALUE` pairs (e.g. `VERSION=0.1.0`) to the make command
+- **🤫 Run in Background** — Right-click a target → "Run in Background" to execute silently without popping up the terminal or stealing focus
+- **⚙️ Configurable Double-Click** — Setting `makefile-explorer.defaultRunMode` lets you choose whether double-click opens the terminal (`foreground`, default) or runs silently (`background`)
 - **📜 View as List** — Toggle button in the view title bar to switch between tree view and a flat list of all targets (label `targetName [path/to/Makefile]`)
 - **✓✗ Target Status Badges** — Each target shows a green check or red cross after running; status persists in `context.globalState` (FIFO-capped at 50)
 - **📎 Dependency Display** — Expand a target to see its dependencies (extracted from `target: dep1 dep2`)
@@ -44,9 +46,11 @@ Built for the monorepo reality: multiple Makefiles, nested directories, dozens o
 1. Open a project that contains Makefiles
 2. Click the **"Make Targets"** view in the Explorer sidebar
 3. Expand a Makefile node to see its targets; expand a target node to see dependencies
-4. **Double-click** a target → executes `make <target>` in a dedicated terminal (each target gets its own terminal tab named `Make - <target>`)
+4. **Double-click** a target → executes `make <target>` (behavior configurable via `makefile-explorer.defaultRunMode` setting: `foreground` pops up the terminal, `background` runs silently)
 5. **Click the 📎 icon** or **right-click** → "Go to Definition" → opens the Makefile at the target's line
 6. **Right-click** a target → "Copy Make Command" → copies `cd "dir" && make -f Makefile <target>` to clipboard
+7. **Right-click** a target → "Run in Background" → executes silently without switching focus
+8. **Right-click** a target → "Run with Args..." → prompts for `KEY=VALUE` pairs before execution
 
 ### Target comments
 
@@ -70,7 +74,7 @@ Above-target comments take priority over inline `##` comments.
 
 | Setting | Type | Default | Description |
 |---------|------|---------|-------------|
-| *(none yet — future release)* | | | |
+| `makefile-explorer.defaultRunMode` | `string` | `"foreground"` | Double-click behavior: `"foreground"` (terminal + focus) or `"background"` (silent, no focus switch) |
 
 ## Requirements
 
@@ -108,11 +112,24 @@ Press **F5** in VSCode to launch the Extension Development Host for debugging.
 
 ```
 src/
-├── extension.ts              # Entry point: TreeView + command registration + status bar
-├── MakefileTreeProvider.ts   # TreeDataProvider: scan + build tree (with dependency nodes)
-├── MakefileTaskProvider.ts   # Task API: task creation + provider registration
-├── TargetParser.ts           # Makefile parser: extract targets + dependencies
-└── types.ts                  # Type definitions (Target, NodeType, MakefileNode)
+├── extension.ts                    # Entry point: TreeView + command registration + status bar
+├── models/
+│   ├── MakefileNode.ts             # TreeItem subclass (makefile / target / dependency nodes)
+│   └── Target.ts                   # Type definitions (Target, NodeType)
+├── providers/
+│   ├── MakefileTreeProvider.ts     # TreeDataProvider: scan + build tree + view mode
+│   └── MakefileTaskProvider.ts     # Task API: task creation + provider registration
+├── services/
+│   ├── MakefileScanner.ts          # Workspace Makefile discovery + node construction
+│   ├── TargetParser.ts             # Makefile parser: extract targets + dependencies
+│   ├── TaskHistoryService.ts       # Persist last task + target status badges
+│   ├── ArgsPromptService.ts        # Input box for KEY=VALUE arguments
+│   └── argsParser.ts               # Parse KEY=VALUE argument strings
+└── test/
+    ├── MakefileTreeProvider.test.ts
+    ├── TargetParser.test.ts
+    ├── TaskHistoryService.test.ts
+    └── ArgsPromptService.test.ts
 ```
 
 ## Contributing

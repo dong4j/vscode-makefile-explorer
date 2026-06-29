@@ -2,7 +2,7 @@
   "name": "makefile-explorer",
   "displayName": "Makefile Explorer",
   "description": "Browse and run Makefile targets in a tree view — double-click to run, click icon to jump to definition",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "publisher": "dong4j",
   "license": "MIT",
   "repository": {
@@ -72,6 +72,11 @@
         "icon": "$(terminal)"
       },
       {
+        "command": "makefile-explorer.runInBackground",
+        "title": "Run in Background",
+        "icon": "$(debug-disconnect)"
+      },
+      {
         "command": "makefile-explorer.refresh",
         "title": "Refresh Makefile Targets",
         "icon": "$(refresh)"
@@ -136,16 +141,39 @@
           "group": "navigation@1"
         },
         {
-          "command": "makefile-explorer.goToDefinition",
+          "command": "makefile-explorer.runInBackground",
           "when": "viewItem == makefileTarget",
           "group": "navigation@2"
         },
         {
-          "command": "makefile-explorer.copyMakeCommand",
+          "command": "makefile-explorer.goToDefinition",
           "when": "viewItem == makefileTarget",
           "group": "navigation@3"
+        },
+        {
+          "command": "makefile-explorer.copyMakeCommand",
+          "when": "viewItem == makefileTarget",
+          "group": "navigation@4"
         }
       ]
+    },
+    "configuration": {
+      "title": "Makefile Explorer",
+      "properties": {
+        "makefile-explorer.defaultRunMode": {
+          "type": "string",
+          "enum": [
+            "foreground",
+            "background"
+          ],
+          "enumDescriptions": [
+            "Run in terminal and switch focus (default)",
+            "Run silently without switching focus"
+          ],
+          "default": "foreground",
+          "description": "Default behavior when double-clicking a Makefile target"
+        }
+      }
     },
     "keybindings": [
       {
